@@ -1,0 +1,14 @@
+################ script from https://wiki.alpinelinux.org/wiki/Finding_the_fastest_mirror
+#### @todo adapt for ubuntu
+#### @todo select mirror in country
+#### @todo "read local"/"update local" mirror list
+data=""
+for s in $(wget -qO- http://rsync.alpinelinux.org/alpine/MIRRORS.txt); do
+        t=$(time -f "%E" wget -q $s/MIRRORS.txt -O /dev/null 2>&1)
+        echo "$s was $t"
+        data="$data$t $s\n"
+done
+
+echo "===RESULTS==="
+
+echo -e $data | sort
