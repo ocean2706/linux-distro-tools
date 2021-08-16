@@ -6,5 +6,5 @@ mkdir -p /etc/udhcpc/
 if [ -f /etc/udhcpc/udhcpc.conf ] then
     echo "Config already exists"
  else 
-  echo "dns=8.8.8.8 8.8.4.4" > /etc/udhcpc/udhcpc.conf
+  echo 'dns="8.8.8.8 8.8.4.4"' > /etc/udhcpc/udhcpc.conf
  fi 
