@@ -8,7 +8,7 @@
 ######### how to use it
 ###
 ### chmod +x setup-totp-mfa.sh
-### 
+### sudo ./setup-totp-mfa.sh yourusername
 ##########
 # Ensure script is run as root
 if [ "$EUID" -ne 0 ]; then
