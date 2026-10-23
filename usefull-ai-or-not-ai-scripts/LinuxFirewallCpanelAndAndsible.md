@@ -1,4 +1,5 @@
 #The story started with an issue: a lot of cpanel servers and different distro`s or distro versions.
+
 Easier to use gemini at the moment, pushed the prompt:" Here is a single, comprehensive Bash script that auto-detects your active firewall backend (iptables, firewalld, or ufw), backs up your current configuration, cleans up restrictions, applies your exact security rules (admin IPs for SSH/cPanel, public services, default drop), creates a golden backup, and applies the changes."
 Of course then it was required to be pushed using something.
 Even if ansible is stubborn to run in "modern" ssh setup ( no root access, no NOPASSWD by default for sudo), it can at least deploy the script on all the servers 
