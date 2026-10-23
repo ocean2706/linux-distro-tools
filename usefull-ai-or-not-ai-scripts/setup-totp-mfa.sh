@@ -5,6 +5,10 @@
 #@description:
 #@help:
 ##### created with gemini  
+## !!!!! not !!!! based on https://ubuntu.com/server/docs/how-to/security/two-factor-authentication-with-totp-or-hotp/ 
+## !!!!! not !!!!! based on https://www.redhat.com/en/blog/mfa-linux
+## why use duo ? Pay a coffe for developers of the tools used in the script
+###@todo  try to bypass it
 ######### how to use it
 ###
 ### chmod +x setup-totp-mfa.sh
