@@ -138,4 +138,88 @@ I have a list of servers where i must deploy it.
 
 Not bad, but not what i intended: deploy the script
 Also, no ideea why the script is related to golden backup, i am sure is just a typo.
-( unfinished business. to be continued, until next time you can contribute )
+
+To handle heterogeneous servers with different SSH users, passwords, and varying `sudo` requirements (some passwordless, some needing a sudo password), Ansible can manage this smoothly using **inventory variables** combined with a simple push-and-execute playbook.
+
+Here is how you can set up your inventory and playbook to push and run your `harden-firewall.sh` script across all your servers.
+
+---
+
+### Step 1: Configure Your Inventory File (`inventory.ini`)
+
+You can define individual SSH connection credentials (`ansible_user`, `ansible_password`) and sudo privileges (`ansible_become_pass`) directly per host in your inventory file.
+
+Create an inventory file named `inventory.ini`:
+
+```ini
+[firewall_targets]
+# Server 1: Connects as root with a password (no separate sudo password needed)
+server1 ansible_host=192.168.1.10 ansible_user=root ansible_password="root_password_here"
+
+# Server 2: Connects as a regular user with an SSH password, and requires a separate sudo password
+server2 ansible_host=192.168.1.11 ansible_user=admin ansible_password="ssh_password_here" ansible_become_pass="sudo_password_here"
+
+# Server 3: Connects as a user with passwordless sudo (no ansible_become_pass needed)
+server3 ansible_host=192.168.1.12 ansible_user=deploy ansible_password="ssh_password_here"
+
+# Server 4: Connects using SSH keys and requires a sudo password
+server4 ansible_host=192.168.1.13 ansible_user=ubuntu ansible_ssh_private_key_file=~/.ssh/id_rsa ansible_become_pass="sudo_password_here"
+
+```
+
+---
+
+### Step 2: Create the Push-and-Run Playbook (`push_script.yml`)
+
+This playbook will take your local `harden-firewall.sh` script, copy it to each server, execute it with root/sudo privileges (automatically using each server's specific sudo settings), print the output, and clean up the temporary file.
+
+Create `push_script.yml` in the same directory where your script lives:
+
+```yaml
+---
+- name: Push and Execute Firewall Hardening Script
+  hosts: firewall_targets
+  become: yes
+  gather_facts: no
+
+  tasks:
+    - name: 1. Copy local hardening script to remote server
+      copy:
+        src: harden-firewall.sh
+        dest: /tmp/harden-firewall.sh
+        mode: '0755'
+
+    - name: 2. Execute the hardening script on remote server
+      shell: /tmp/harden-firewall.sh
+      register: script_output
+
+    - name: 3. Display execution output
+      debug:
+        msg: "{{ script_output.stdout_lines }}"
+
+    - name: 4. Clean up script from remote /tmp directory
+      file:
+        path: /tmp/harden-firewall.sh
+        state: absent
+
+```
+
+---
+
+### Step 3: Run the Playbook
+
+To execute the deployment across all servers simultaneously, run:
+
+```bash
+ansible-playbook -i inventory.ini push_script.yml
+
+```
+
+### Pro-Tip for Safety:
+
+If you want to test the script execution on a single server first before pushing it to the whole fleet, you can use Ansible's `--limit` flag:
+
+```bash
+ansible-playbook -i inventory.ini push_script.yml --limit server1
+
+```
