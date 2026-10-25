@@ -1,2 +1,2 @@
 # linux-distro-tools
-linux life can be easy
+linux life can be easy ?
