@@ -22,4 +22,4 @@ export IGNORE_DUPES=no
 # 3) Force history to be written to disk after EVERY command,
 #    so it survives an abrupt session drop (no clean EXIT/SIGHUP).
 #    PROMPT_COMMAND runs before each new prompt, so this is frequent.
-PROMPT_COMMAND="histdump=$(date +%s); history -a; ${PROMPT_COMMAND}"
+PROMPT_COMMAND="history -a; ${PROMPT_COMMAND}"
